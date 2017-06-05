@@ -10,7 +10,7 @@ namespace Demo.Controllers
     [ApiVersion("1.0", Deprecated = true)]
     [ApiVersion("2.0", Deprecated = true)]
     [ApiVersion("3.0")]
-    [Route("{api-version:apiVersion}/[controller]")]
+    [Route("parallel")]
     public sealed class ParallelController
     {
         private readonly RemoteService _remoteService;
@@ -31,11 +31,8 @@ namespace Demo.Controllers
                 data,
                 async (item, loopState, index) =>
                     {
-                        var response = await _remoteService.IOBoundOperationAsync(timeoutInSec: 5);
-                        foreach (var x in response)
-                        {
-                            result[index] = x;
-                        }
+                        var details = await _remoteService.IOBoundOperationAsync(timeoutInSec: 5);
+                        result[index] = string.Join(", ", details);
                     });
 
             return result;
@@ -53,11 +50,8 @@ namespace Demo.Controllers
                 data,
                 (item, loopState, index) =>
                     {
-                        var response = _remoteService.IOBoundOperationAsync(timeoutInSec: 5);
-                        foreach (var x in response.Result)
-                        {
-                            result[index] = x;
-                        }
+                        var details = _remoteService.IOBoundOperationAsync(timeoutInSec: 5);
+                        result[index] = string.Join(", ", details.Result);
                     });
 
             return result;
@@ -73,11 +67,8 @@ namespace Demo.Controllers
             var tasks = data.Select(
                 async (item, index) =>
                     {
-                        var response = await _remoteService.IOBoundOperationAsync(timeoutInSec: 5);
-                        foreach (var x in response)
-                        {
-                            result[index] = x;
-                        }
+                        var details = await _remoteService.IOBoundOperationAsync(timeoutInSec: 5);
+                        result[index] = string.Join(", ", details);
                     });
 
             await Task.WhenAll(tasks);

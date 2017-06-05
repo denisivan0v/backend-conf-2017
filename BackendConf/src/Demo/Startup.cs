@@ -42,12 +42,11 @@ namespace Demo
                                 description.GroupName,
                                 new Info
                                     {
-                                        Title = $"DotNext Demo API {description.ApiVersion}",
+                                        Title = $"Backend Conf Demo API {description.ApiVersion}",
                                         Version = description.ApiVersion.ToString()
                                     });
                         }
 
-                        x.TagActionsBy(d => d.ActionDescriptor.RouteValues["controller"]);
                         x.OperationFilter<ImplicitApiVersionParameter>();
                     });
             services.AddSingleton<RemoteService>();
@@ -57,6 +56,7 @@ namespace Demo
         {
             loggerFactory.AddSerilog();
             app.UseMvc();
+            app.UseApiVersioning();
             app.UseSwagger();
             app.UseSwaggerUI(
                 c =>
